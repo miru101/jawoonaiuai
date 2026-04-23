@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ai수ㅏㅎㄱ</title>
+    <style>
+        body { font-family: 'Pretendard', sans-serif; background-color: #f0f2f5; padding: 20px; color: #333; line-height: 1.6; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #d93025; font-size: 24px; margin-bottom: 25px; }
+        .menu { display: flex; justify-content: center; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; }
+        button { padding: 12px 18px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; font-size: 14px; }
+        .btn-menu { background-color: #e8f0fe; color: #1a73e8; }
+        .btn-menu.active { background-color: #d93025; color: white; }
+        .problem-card { background: #fff; border: 2px solid #e8eaed; padding: 25px; border-radius: 15px; position: relative; min-height: 280px; }
+        .category-badge { position: absolute; top: -12px; left: 20px; background: #202124; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .math-box { font-size: 17px; margin: 15px 0; }
+        .doc-set { background: #fafafa; padding: 15px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 15px; font-size: 14px; color: #444; word-break: break-all; }
+        .ans-btn { width: 100%; background: #202124; color: white; padding: 15px; margin-top: 15px; border-radius: 10px; font-size: 16px; border: none; }
+        #answer-box { display: none; margin-top: 20px; padding: 20px; background: #fff3f3; border-radius: 10px; border-left: 5px solid #d93025; font-weight: bold; }
+        .q-text { font-size: 19px; font-weight: bold; color: #d93025; background: #fff; border: 2px solid #d93025; padding: 12px; border-radius: 8px; display: inline-block; margin-top: 10px; width: 100%; box-sizing: border-box; }
+        .res-highlight { color: #d93025; font-size: 22px; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>인공지능수학공부륽굳이해야할까</h1>
+    
+    <div class="menu">
+        <button class="btn-menu active" onclick="changeMode('mlp', this)">인공신경망</button>
+        <button class="btn-menu" onclick="changeMode('sim', this)">유사도(COS/유클리드)</button>
+        <button class="btn-menu" onclick="changeMode('tfidf', this)">단어 집합 분석</button>
+        <button class="btn-menu" onclick="changeMode('jaccard', this)">자카드 유사도</button>
+    </div>
+
+    <div class="problem-card">
+        <span id="badge" class="category-badge">인공신경망</span>
+        <div id="problem-content" class="math-box"></div>
+        <button class="ans-btn" onclick="toggleAnswer()">정답 확인</button>
+        <button class="ans-btn" style="background:#5f6368; margin-top:10px;" onclick="generateProblem()">다음 문제</button>
+    </div>
+
+    <div id="answer-box"></div>
+</div>
+
+<script>
+    let currentMode = 'mlp';
+    const wordsPool = [
+        "인공지능", "머신러닝", "딥러닝", "알고리즘", "데이터", "컴퓨터", "프로그램", "파이썬", "자바", "네트워크",
+        "서버", "코딩", "데이터베이스", "로봇", "센서", "빅데이터", "클라우드", "스마트폰", "태블릿", "인터넷",
+        "학교", "학생", "선생님", "공부", "시험", "수학", "과학", "영어", "역사", "음악",
+        "미술", "체육", "도서관", "교실", "친구", "운동장", "급식", "숙제", "노트", "연필",
+        "축구", "농구", "야구", "수영", "테니스", "등산", "자전거", "영화", "노래", "게임",
+        "여행", "사진", "그림", "요리", "캠핑", "독서", "피아노", "기타", "춤", "연극",
+        "사과", "바나나", "포도", "딸기", "수박", "오렌지", "피자", "치킨", "햄버거", "라면",
+        "커피", "우유", "빵", "밥", "김치", "파스타", "샐러드", "고기", "국수", "떡볶이"
+    ];
+
+    function changeMode(mode, btn) {
+        currentMode = mode;
+        document.querySelectorAll('.btn-menu').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const badges = { 'mlp': '인공신경망', 'sim': '유사도', 'tfidf': '단어 집합 분석', 'jaccard': '자카드 유사도' };
+        document.getElementById('badge').innerText = badges[mode];
+        generateProblem();
+    }
+
+    function generateProblem() {
+        document.getElementById('answer-box').style.display = 'none';
+        let content = '';
+        let answer = '';
+
+        if (currentMode === 'mlp') {
+            const count = 3;
+            let inputs = [], weights = [], sum = 0;
+            for(let i=0; i<count; i++){
+                let x = Math.floor(Math.random() * 9) + 1;
+                let w = parseFloat((Math.random() * 0.9 + 0.1).toFixed(1));
+                inputs.push(x); weights.push(w);
+                sum += x * w;
+            }
+            let t = (sum + (Math.random() > 0.5 ? 0.4 : -0.4)).toFixed(1);
+            content = `<b>[조건]</b><br>`;
+            inputs.forEach((x, i) => content += `입력 x${i+1}=${x}, 가중치 w${i+1}=${weights[i]}<br>`);
+            content += `<span class="q-text">임곗값 T = ${t} 일 때, 출력 y?</span>`;
+            answer = `가중합: ${sum.toFixed(2)} / T: ${t} <br> 결과: <span class="res-highlight">${sum >= t ? 1 : 0}</span>`;
+
+        } else if (currentMode === 'sim') {
+            let a = [Math.floor(Math.random()*7)+1, Math.floor(Math.random()*7)+1];
+            let b = [Math.floor(Math.random()*7)+1, Math.floor(Math.random()*7)+1];
+            if(a[0]*b[1] === a[1]*b[0]) b[0] += 1; // 일치 방지
+
+            if(Math.random() > 0.5) { // 유클리드
+                let dSq = (b[0]-a[0])**2 + (b[1]-a[1])**2;
+                content = `A = [${a[0]}, ${a[1]}], B = [${b[0]}, ${b[1]}]<br><span class="q-text">유클리드 거리?</span>`;
+                answer = `계산: √(${b[0]-a[0]}² + ${b[1]-a[1]}²) <br> 정답: <span class="res-highlight">√${dSq}</span>`;
+            } else { // 코사인
+                let dot = (a[0]*b[0]) + (a[1]*b[1]);
+                let sASq = a[0]**2 + a[1]**2;
+                let sBSq = b[0]**2 + b[1]**2;
+                content = `A = [${a[0]}, ${a[1]}], B = [${b[0]}, ${b[1]}]<br><span class="q-text">코사인 유사도?</span>`;
+                answer = `식: ${dot} / (√${sASq} × √${sBSq}) <br> 결과: <span class="res-highlight">${dot} / √${sASq * sBSq}</span>`;
+            }
+
+        } else if (currentMode === 'tfidf') {
+            const docCount = Math.floor(Math.random()*3)+3; // 3~5개 문서
+            const target = wordsPool[Math.floor(Math.random() * wordsPool.length)];
+            let docs = [];
+            let df = 0, tf1 = 0;
+            for(let i=0; i<docCount; i++){
+                let cur = [];
+                let cnt = Math.floor(Math.random()*4);
+                if(cnt > 0) df++;
+                if(i===0) tf1 = cnt;
+                for(let j=0; j<cnt; j++) cur.push(target);
+                for(let k=0; k<3; k++) cur.push(wordsPool[Math.floor(Math.random()*wordsPool.length)]);
+                cur.sort(() => Math.random() - 0.5);
+                docs.push(`문서 ${i+1}: { ${cur.join(", ")} }`);
+            }
+            const type = ['TF', 'DF', 'IDF', 'TF-IDF'][Math.floor(Math.random()*4)];
+            content = `<div class="doc-set">${docs.join('<br>')}</div>Target: <b>[ ${target} ]</b><br><span class="q-text">구할 값: ${type}</span>`;
+            
+            if(type==='TF') answer = `문서 1 내 빈도: <span class="res-highlight">${tf1}</span>`;
+            else if(type==='DF') answer = `등장 문서 수: <span class="res-highlight">${df}</span>`;
+            else if(type==='IDF') answer = `식: 전체(${docCount}) / DF(${df}) <br> 결과: <span class="res-highlight">${docCount}/${df}</span>`;
+            else answer = `식: TF(${tf1}) × (전체(${docCount})/DF(${df})) <br> 결과: <span class="res-highlight">${tf1} × (${docCount}/${df})</span>`;
+
+        } else if (currentMode === 'jaccard') {
+            let p = [...wordsPool].sort(() => Math.random() - 0.5);
+            let commonCnt = Math.floor(Math.random()*3)+1;
+            let onlyACnt = Math.floor(Math.random()*3)+2;
+            let onlyBCnt = Math.floor(Math.random()*3)+2;
+
+            let setA = [...p.slice(0, commonCnt), ...p.slice(10, 10+onlyACnt)].sort(() => Math.random() - 0.5);
+            let setB = [...p.slice(0, commonCnt), ...p.slice(20, 20+onlyBCnt)].sort(() => Math.random() - 0.5);
+            
+            let inter = commonCnt;
+            let union = commonCnt + onlyACnt + onlyBCnt;
+
+            content = `<div class="doc-set">A: { ${setA.join(", ")} }<br>B: { ${setB.join(", ")} }</div><span class="q-text">자카드 유사도?</span>`;
+            answer = `교집합: ${inter}개 / 합집합: ${union}개 <br> 결과: <span class="res-highlight">${inter} / ${union}</span>`;
+        }
+
+        document.getElementById('problem-content').innerHTML = content;
+        document.getElementById('answer-box').innerHTML = answer;
+    }
+
+    function toggleAnswer() {
+        const box = document.getElementById('answer-box');
+        box.style.display = (box.style.display === 'block') ? 'none' : 'block';
+    }
+
+    generateProblem();
+</script>
+
+</body>
+</html>
